@@ -26,6 +26,7 @@ void MyApp::setup() {
 
     windows_size = cinder::app::getWindowSize();
     block_.setup();
+    block_.generateBox();
 
 }
 
@@ -34,22 +35,52 @@ void MyApp::update() {
     int32 velocityIterations = 6;
     int32 positionIterations = 2;
     block_.step(timeStep, velocityIterations, positionIterations);
+    if (block_.getPosition().x == rec_pos_x && rec_pos_y == block_.getPosition().y &&
+            rec_pos_angle == block_.getAngle()) {
+        block_.generateBox();
+        block_.setcurrent(block_.getcurrent() + 1);
+    }
+    rec_pos_x = block_.getPosition().x;
+    rec_pos_y = block_.getPosition().y;
+    rec_pos_angle = block_.getAngle();
 }
 
 void MyApp::draw() {
 
     DrawBackground();
     DrawBlock(block_.getPosition());
-
+    DrawPrevBlocks();
 
 
 }
 
 void MyApp::keyDown(KeyEvent event) {
     switch (event.getCode()) {
-        case KeyEvent::KEY_o: {
 
+
+        case KeyEvent::KEY_q: {
+            block_.move(-0.02f);
         }
+        case KeyEvent::KEY_e: {
+            block_.move(0.02f);
+        }
+
+    }
+}
+
+void MyApp::DrawPrevBlocks() {
+    cinder::gl::color(1,1,0);
+    std::vector<b2Body*> b = block_.getBodies();
+    if (b.size() == 1) {
+        return;
+    }
+    for (int i = 0; i < b.size() - 1; i++) {
+        float32 x = b[i]->GetPosition().x * 200;
+        float32 y = b[i]->GetPosition().y * 200;
+        gl::drawSolidRect( Rectf( x-20.0f,
+                                  800 - y-20.0f,
+                                  x+20.0f,
+                                  800 - y+20.0f ) );
     }
 }
 
