@@ -3,6 +3,7 @@ if (${CMAKE_VERSION} VERSION_LESS 3.11)
     cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
 endif ()
 
+
 cmake_policy(SET CMP0054 NEW)
 
 message("CMake Version: ${CMAKE_VERSION}.")
@@ -19,6 +20,7 @@ project(FinalProject
 
 include(ExternalProject)
 # Optionally set things like CMAKE_CXX_STANDARD, CMAKE_POSITION_INDEPENDENT_CODE here
+include_directories(.)
 
 set(CMAKE_CXX_STANDARD 14)
 # This tells the compiler to not aggressively optimize and
@@ -76,14 +78,87 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/catchorg/Catch2.git
     GIT_TAG        v2.11.1
 )
+# Database library
+FetchContent_Declare(
+        sqlite-modern-cpp
+        GIT_REPOSITORY https://github.com/SqliteModernCpp/sqlite_modern_cpp.git
+        GIT_TAG a0f96c10f04d96ccea1b8a49d5998c96e7887bf4
+)
+
+# Testing library. Header-only.
+FetchContent_Declare(
+        catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+        GIT_TAG        v2.11.1
+)
+
+# Command-line parsing library
+FetchContent_Declare(
+        gflags
+        GIT_REPOSITORY https://github.com/gflags/gflags.git
+        GIT_TAG v2.2.2
+)
+
+# JSON Library. Header-only.
+FetchContent_Declare(
+        nlohmann_json
+        URL https://github.com/nlohmann/json/releases/download/v3.7.3/include.zip
+)
+
+FetchContent_Declare(
+        sqlite3
+        GIT_REPOSITORY https://github.com/alex85k/sqlite3-cmake.git
+        GIT_TAG v3.24.0
+)
+
+FetchContent_Declare(
+        Box2D
+        GIT_REPOSITORY https://github.com/erincatto/box2d.git
+)
 
 # Adds catch2 library. This is a header only library.
 FetchContent_GetProperties(catch2)
 if(NOT catch2_POPULATED)
     FetchContent_Populate(catch2)
     # This is overkill since we only need a single file. Though it is a clean solution.
-    add_library(catch2 INTERFACE)
-    target_include_directories(catch2 INTERFACE ${catch2_SOURCE_DIR}/single_include)
+#    add_library(catch2 INTERFACE src/engine.cpp include/mylibrary/engine.h)
+#    target_include_directories(catch2 INTERFACE ${catch2_SOURCE_DIR}/single_include)
 endif()
 
 # Add more CMake libraries here ...
+set(Box2D_SOURCE_DIR "/home/ryan/Documents/ClionProject/Cinder/projects/final-project-ryanliaoyz/box2d-master")
+include_directories (${Box2D_SOURCE_DIR})
+
+get_filename_component(CINDER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../" ABSOLUTE)
+
+# Adds gflags::gflags
+FetchContent_GetProperties(gflags)
+if (NOT gflags_POPULATED)
+    FetchContent_Populate(gflags)
+    add_subdirectory(${gflags_SOURCE_DIR} ${gflags_BINARY_DIR})
+endif ()
+
+## Adds nlohmann_json library.
+#FetchContent_GetProperties(nlohmann_json)
+#if (NOT nlohmann_json_POPULATED)
+#    FetchContent_Populate(nlohmann_json)
+#    add_library(nlohmann_json INTERFACE src/blocks.cpp)
+#    target_include_directories(nlohmann_json INTERFACE ${nlohmann_json_SOURCE_DIR}/single_include)
+#endif ()
+
+# Adds sqlite3
+FetchContent_GetProperties(sqlite3)
+if (NOT sqlite3_POPULATED)
+    FetchContent_Populate(sqlite3)
+    add_subdirectory(${sqlite3_SOURCE_DIR} ${sqlite3_BINARY_DIR})
+    target_include_directories(sqlite3 INTERFACE ${sqlite3_SOURCE_DIR}/src)
+endif ()
+
+
+## Adds Box2D
+#FetchContent_GetProperties(Box2D)
+#if (NOT Box2D)
+#    FetchContent_Populate(Box2D)
+#    add_subdirectory(${Box2D_SOURCE_DIR} ${Box2D_BINARY_DIR})
+#    target_include_directories(sqlite3 INTERFACE ${sqlite3_SOURCE_DIR}/src)
+#endif ()
