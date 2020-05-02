@@ -23,11 +23,18 @@ namespace myapp {
         void update() override ;
         void draw() override ;
 
+
     private:
+
         void DrawBackground() const;
-        void DrawBlock(b2Vec2 pos) const;
+        void DrawBlock(Block block) const;
+        void DrawPrevBlocks();
+        int detect_erase();
         ivec2 windows_size;
         Block block_;
+        float32 rec_pos_x = 0;
+        float32 rec_pos_y = 0;
+        float32 rec_pos_angle = 0;
     };
 
 }  // namespace myapp
