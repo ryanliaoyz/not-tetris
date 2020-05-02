@@ -12,7 +12,7 @@ Author: Yunze Liao
 ### Summary
 A Tetris game with physics engine, the blocks will not always fall into the grid.
 It should be looking like this:
-![example](https://github.com/CS126SP20/project-proposal-ryanliaoyz/blob/master/Screenshot%20from%202020-04-15%2004-49-27.png)
+![example](https://github.com/CS126SP20/final-project-ryanliaoyz/blob/master/Screenshot%20from%202020-05-02%2009-44-32.png?raw=true)
 
 The blocks will only be erased if the contents on a horizontal line reached a desired amount(since it's unlikely to be fully filled)
 
