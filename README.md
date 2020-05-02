@@ -23,6 +23,13 @@ The blocks will be falling from top to bottom as most Tetris game do. However, t
  - background music & erasing sound effect
  - randomlize block pattern
  
+### Controls
+| Key        | Function           | 
+| ------------- |:-------------:| 
+| Q      | move toward left | 
+| W      | rotate       | 
+| E | move toward right      | 
+ 
 ### Libraries & Cinder Blocks
  - Box2D(https://github.com/erincatto/box2d)
    - A 2D physics engine to simulated colliding effect for blocks.
