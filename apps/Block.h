@@ -21,6 +21,8 @@ public:
     void move(float32 val);
     void rotate();
     b2Body* getCurrentBody();
+    void deleteBody(int line);
+    float32 findIntersect(float32 x1, float32 x2, float32 y1, float32 y2, float32 height);
 };
 
 

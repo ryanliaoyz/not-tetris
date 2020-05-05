@@ -253,3 +253,61 @@ std::vector<b2Body *> Block::getBodies() {
 b2Body *Block::getCurrentBody() {
     return body;
 }
+
+void Block::deleteBody(int line) {
+    int upperbound = line * 40 + 20;
+    int lowerbound = upperbound - 40;
+    for (b2Body* b = world.GetBodyList(); b; b = b->GetNext()) {
+        for (b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext()) {
+            std::vector<float32> intersects(size);
+            b2PolygonShape* s = reinterpret_cast<b2PolygonShape *>(f->GetShape());
+            b2Body* temp = f->GetBody();
+            int size = s->GetVertexCount();
+            std::vector<float32> vx(size);
+            std::vector<float32> vy(size);
+            for (int i = 0; i < size; i++) {
+                vx[i] = temp->GetWorldPoint(s->GetVertex(i)).x * 200;
+                vy[i] = temp->GetWorldPoint(s->GetVertex(i)).y * 200;
+            }
+
+            for (int i = 0; i < size; i++) {
+                int loc;
+                if (i < size - 1) {
+                    loc = i + 1;
+                } else {
+                    loc = 0;
+                }
+                float32 x1 = vx[i];
+                float32 y1 = vy[i];
+                float32 x2 = vx[loc];
+                float32 y2 = vy[loc];
+                float32 intersect = findIntersect(x1, x2, y1, y2, upperbound);
+                if (intersect < 0 || intersect > 800) {
+                    break;
+                } else {
+                    intersects.push_back(intersect);
+                }
+            }
+
+        }
+    }
+}
+
+
+float32 Block::findIntersect(float32 x1, float32 x2, float32 y1, float32 y2, float32 height) {
+    float32 intersection;
+    float32 m1, c1, m2, c2;
+    float32 dx, dy;
+
+    m1 = 0;
+    c1 = height;
+
+    dx = x2 - x1;
+    dy = y2 - y1;
+    m2 = dy / dx;
+    c2 = y2 - m2 * x2;
+    if (m1 - m2 == 0) {
+        return 0;
+    }
+    return (c2 - c1) / (m1 - m2);
+}
