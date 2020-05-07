@@ -25,16 +25,19 @@ namespace myapp {
 
 
     private:
-
+        void Reset();
         void DrawBackground() const;
         void DrawBlock(Block block) const;
         void DrawPrevBlocks();
         int detect_erase();
+        void GameOver(int score);
         ivec2 windows_size;
         Block block_;
         float32 rec_pos_x = 0;
         float32 rec_pos_y = 0;
         float32 rec_pos_angle = 0;
+        int score = 0;
+        bool game_over = false;
     };
 
 }  // namespace myapp

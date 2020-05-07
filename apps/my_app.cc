@@ -18,6 +18,20 @@ using std::chrono::seconds;
 using std::chrono::system_clock;
 using std::string;
 
+const int END_LINE = 3;
+#if defined(CINDER_COCOA_TOUCH)
+    const char kNormalFont[] = "Arial";
+const char kBoldFont[] = "Arial-BoldMT";
+const char kDifferentFont[] = "AmericanTypewriter";
+#elif defined(CINDER_LINUX)
+    const char kNormalFont[] = "Arial Unicode MS";
+    const char kBoldFont[] = "Arial Unicode MS";
+    const char kDifferentFont[] = "Purisa";
+#else
+    const char kNormalFont[] = "Arial";
+const char kBoldFont[] = "Arial Bold";
+const char kDifferentFont[] = "Papyrus";
+#endif
 MyApp::MyApp() {
 
 }
@@ -31,28 +45,33 @@ void MyApp::setup() {
 }
 
 void MyApp::update() {
-    float timeStep = 1.0f / 60.0f;
-    int32 velocityIterations = 6;
-    int32 positionIterations = 2;
-    block_.step(timeStep, velocityIterations, positionIterations);
-    if (block_.getPosition().x == rec_pos_x && rec_pos_y == block_.getPosition().y &&
+    if (!game_over) {
+        float timeStep = 1.0f / 60.0f;
+        int32 velocityIterations = 6;
+        int32 positionIterations = 2;
+        block_.step(timeStep, velocityIterations, positionIterations);
+        if (block_.getPosition().x == rec_pos_x && rec_pos_y == block_.getPosition().y &&
             rec_pos_angle == block_.getAngle()) {
-        detect_erase();
-        block_.generateBox();
-        block_.setcurrent(block_.getcurrent() + 1);
+            detect_erase();
+            block_.generateBox();
+            block_.setcurrent(block_.getcurrent() + 1);
+        }
+        rec_pos_x = block_.getPosition().x;
+        rec_pos_y = block_.getPosition().y;
+        rec_pos_angle = block_.getAngle();
     }
-    rec_pos_x = block_.getPosition().x;
-    rec_pos_y = block_.getPosition().y;
-    rec_pos_angle = block_.getAngle();
+
 
 }
 
 void MyApp::draw() {
+    if (!game_over) {
+        DrawBackground();
 
-    DrawBackground();
+        DrawBlock(block_);
+        DrawPrevBlocks();
+    }
 
-    DrawBlock(block_);
-    DrawPrevBlocks();
 
 
 }
@@ -73,13 +92,17 @@ void MyApp::keyDown(KeyEvent event) {
             block_.rotate();
             break;
         }
+        case KeyEvent::KEY_r: {
+            Reset();
+            break;
+        }
     }
 }
 
 void MyApp::DrawPrevBlocks() {
     cinder::gl::color(1,1,0);
     std::vector<b2Body*> b = block_.getBodies();
-    if (b.size() == 1) {
+    if (b.size() < 1) {
         return;
     }
     for (int i = 0; i < b.size() - 1; i++) {
@@ -268,7 +291,25 @@ void MyApp::DrawBackground() const {
     gl::drawSolidRect(Rectf(0, 0, 20, 800));
     gl::drawSolidRect(Rectf(780, 0, 800, 800));
 }
+    template <typename C>
+    void PrintText(const string& text, const C& color, const cinder::ivec2& size,
+                   const cinder::vec2& loc) {
+        cinder::gl::color(color);
 
+        auto box = TextBox()
+                .alignment(TextBox::CENTER)
+                .font(cinder::Font(kNormalFont, 30))
+                .size(size)
+                .color(color)
+                .backgroundColor(ColorA(0, 0, 0, 0))
+                .text(text);
+
+        const auto box_size = box.getSize();
+        const cinder::vec2 locp = {loc.x - box_size.x / 2, loc.y - box_size.y / 2};
+        const auto surface = box.render();
+        const auto texture = cinder::gl::Texture::create(surface);
+        cinder::gl::draw(texture, locp);
+    }
     int MyApp::detect_erase() {
         struct{ GLubyte blue, yellow, white; } pixel;
         ivec2 size = getWindowSize();
@@ -281,7 +322,19 @@ void MyApp::DrawBackground() const {
                     countyellow++;
                 }
             }
-            if (countyellow > 500) {
+            score += (countyellow - 18);
+
+            if (counter == END_LINE) {
+                if (countyellow == 18) {
+                    score = 0;
+                } else {
+                    game_over = true;
+                    cinder::gl::clear(Color(0, 0, 0));
+
+                    GameOver(score);
+                }
+            }
+            if (countyellow >600) {
                 block_.deleteBody(counter);
             }
             cout << "row"<< counter << ":" <<countyellow << endl;
@@ -293,7 +346,29 @@ void MyApp::DrawBackground() const {
         return 1;
     }
 
+    void MyApp::Reset() {
 
+        block_.reset();
+        rec_pos_x = 0;
+        rec_pos_y = 0;
+        rec_pos_angle = 0;
+        score = 0;
+        game_over = false;
+        setup();
+}
+
+    void MyApp::GameOver(int score) {
+        const cinder::vec2 center = getWindowCenter();
+        const cinder::ivec2 size = {500, 50};
+        const Color color = Color::white();
+
+        size_t row = 0;
+        PrintText("Game Over :(", color, size, center);
+        std::stringstream ss;
+        ss << "your score is: " << score;
+        PrintText(ss.str(), color, size, {center.x, center.y + (++row) * 50});
+
+    }
 
 
 }  // namespace myapp

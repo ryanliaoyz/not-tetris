@@ -29,6 +29,7 @@ The blocks will be falling from top to bottom as most Tetris game do. However, t
 | Q      | move toward left | 
 | W      | rotate       | 
 | E | move toward right      | 
+| R | reset game |
  
 ### Libraries & Cinder Blocks
  - Box2D(https://github.com/erincatto/box2d)

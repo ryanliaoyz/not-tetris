@@ -8,7 +8,9 @@
 #include <vector>
 class Block {
 public:
+
     Block() {};
+    void reset();
     void setup();
     void step(float32 f, int32 s, int32 t);
     b2Vec2 getPosition();

@@ -259,10 +259,11 @@ void Block::deleteBody(int line) {
     int lowerbound = upperbound - 40;
     for (b2Body* b = world.GetBodyList(); b; b = b->GetNext()) {
         for (b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext()) {
-            std::vector<float32> intersects(size);
+
             b2PolygonShape* s = reinterpret_cast<b2PolygonShape *>(f->GetShape());
             b2Body* temp = f->GetBody();
             int size = s->GetVertexCount();
+            std::vector<float32> intersects(size);
             std::vector<float32> vx(size);
             std::vector<float32> vy(size);
             for (int i = 0; i < size; i++) {
@@ -282,13 +283,13 @@ void Block::deleteBody(int line) {
                 float32 x2 = vx[loc];
                 float32 y2 = vy[loc];
                 float32 intersect = findIntersect(x1, x2, y1, y2, upperbound);
-                if (intersect < 0 || intersect > 800) {
+                if (intersect <= 0 || intersect > 800) {
                     break;
                 } else {
                     intersects.push_back(intersect);
                 }
             }
-
+            break;
         }
     }
 }
@@ -310,4 +311,12 @@ float32 Block::findIntersect(float32 x1, float32 x2, float32 y1, float32 y2, flo
         return 0;
     }
     return (c2 - c1) / (m1 - m2);
+}
+
+void Block::reset() {
+    for (b2Body* b = world.GetBodyList(); b; b = b->GetNext()) {
+        world.DestroyBody(b);
+    }
+    bodies.clear();
+    generateBox();
 }

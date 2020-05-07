@@ -154,6 +154,14 @@ if (NOT sqlite3_POPULATED)
     target_include_directories(sqlite3 INTERFACE ${sqlite3_SOURCE_DIR}/src)
 endif ()
 
+# Adds sqlite_modern_cpp.
+FetchContent_GetProperties(sqlite-modern-cpp)
+if (NOT sqlite-modern-cpp_POPULATED)
+    FetchContent_Populate(sqlite-modern-cpp)
+    add_library(sqlite-modern-cpp INTERFACE)
+    target_include_directories(sqlite-modern-cpp INTERFACE ${sqlite-modern-cpp_SOURCE_DIR}/hdr)
+endif ()
+
 
 ## Adds Box2D
 #FetchContent_GetProperties(Box2D)

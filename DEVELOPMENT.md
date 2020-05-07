@@ -8,7 +8,6 @@
 - April 27: created complex shape by combining box2d fixtures to desired Tetris shapes
 - April 28: rendering those Tetris shapes & improved collision effect & detecting line occupancy
 ## Week 3
-- TODO: finishing erase effect by creating new vertex on exsiting b2Body in order to cut(or alternative approach to the project)
-- TODO: database & leaderboard
-- TODO: background music & sound effect
+- May 5th: gameover & reset
+- TODO: finishing erase effect by creating new vertex on exsiting b2Body in order to cut(currently counter accumulating points)
 ---
