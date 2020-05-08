@@ -49,7 +49,7 @@ void Block::setup() {
 
     groundBodyright->CreateFixture(&groundBoxright, 0.0f);
 
-
+//    generateBox();
 }
 
 void Block::generateBox() {
@@ -318,5 +318,5 @@ void Block::reset() {
         world.DestroyBody(b);
     }
     bodies.clear();
-    generateBox();
+//    generateBox();
 }

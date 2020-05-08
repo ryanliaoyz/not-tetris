@@ -18,7 +18,7 @@ using std::chrono::seconds;
 using std::chrono::system_clock;
 using std::string;
 
-const int END_LINE = 3;
+const int END_LINE = 5;
 #if defined(CINDER_COCOA_TOUCH)
     const char kNormalFont[] = "Arial";
 const char kBoldFont[] = "Arial-BoldMT";
@@ -54,6 +54,7 @@ void MyApp::update() {
             rec_pos_angle == block_.getAngle()) {
             detect_erase();
             block_.generateBox();
+
             block_.setcurrent(block_.getcurrent() + 1);
         }
         rec_pos_x = block_.getPosition().x;
@@ -349,6 +350,7 @@ void MyApp::DrawBackground() const {
     void MyApp::Reset() {
 
         block_.reset();
+        block_.setcurrent(0);
         rec_pos_x = 0;
         rec_pos_y = 0;
         rec_pos_angle = 0;
